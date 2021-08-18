@@ -1,0 +1,10 @@
+---
+- hosts: webserver
+  become: true
+  tasks:
+    - name: war deployed
+      copy:
+        src: /var/lib/jenkins/workspace/ansible/build/libs/gradle-build-scan-quickstart.jar
+        dest: /var/lib/tomcat9/webapps
+      notify:
+      - restart tomcat9 service
