@@ -1,5 +1,5 @@
 plugins {
-    id "com.gradle.enterprise" version "3.10"
+    id "com.gradle.enterprise" version "3.10" // when updating this version, merge the main branch into the custom-values branch as well
 }
 
 rootProject.name = 'gradle-build-scan-quickstart'
