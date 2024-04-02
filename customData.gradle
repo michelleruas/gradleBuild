@@ -5,6 +5,8 @@ import org.gradle.internal.exceptions.LocationAwareException
 def GITHUB_REPO = 'https://github.com/gradle/gradle-build-scan-quickstart'
 def FORUM_PARAMS = '%22&body=put%20your%20build%20scan%20url%20here!&category=Help%2FDiscuss&tags=buildscan-provided'
 
+def buildScan = develocity.buildScan
+
 // Local or CI
 if (System.getenv('CI')) {
     buildScan.tag 'CI'
@@ -76,10 +78,11 @@ gradle.taskGraph.afterTask { Task task, TaskState state ->
 
 // Creation of a topic in Gradle Forum
 buildScan.buildFinished { result ->
-    if (result.failure) {
-        if (result.failure instanceof LocationAwareException) {
-            if (!result.failure.reportableCauses.isEmpty()) {
-                def reportMessage = result.failure.reportableCauses[0].message
+    if (!result.failures.empty) {
+        def firstFailure = result.failures[0]
+        if (firstFailure instanceof LocationAwareException) {
+            if (!firstFailure.reportableCauses.isEmpty()) {
+                def reportMessage = firstFailure.reportableCauses[0].message
                 def message = reportMessage.replace(' ', "%20")
                 def link = "http://discuss.gradle.org/new-topic?title=Build%20fails%20with%20%22$message$FORUM_PARAMS"
                 buildScan.link("Create Gradle Forum Topic", link)
